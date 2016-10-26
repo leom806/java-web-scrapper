@@ -7,7 +7,7 @@ desse conteúdo sem nenhuma biblioteca adicional, até que descubro o XStream.
 Agora estou implementando essa biblioteca no algoritmo e, para isso, alterando boa parte
 dele. Por isso ele não está funcionando como deveria.
 
-Sou estudante do primeiro ano de Análise e Desenvolvimento de Sistemas, por isso o código
-não é complexo e longe de ser o melhor e mais eficiente.
+Sou estudante do primeiro ano de Análise e Desenvolvimento de Sistemas, portanto o código
+não é complexo e longe de ser o mais eficiente.
 
 Toda ajuda é bem vinda! 
