@@ -29,7 +29,7 @@ public class FHTML {
   private String new_sc;                  //Novo codigo html ; sc = source code
 
   private String html = "";               //Código html recebido
-  private static String parcial = "";    	//Resultado parcial para retorno
+  private static String parcial = "";     //Resultado parcial para retorno
 
   /*Objetos*/
   private static XStream xstream = null;                    //Manipulador de arquivos DOM
