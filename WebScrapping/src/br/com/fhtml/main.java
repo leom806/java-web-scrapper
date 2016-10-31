@@ -12,15 +12,22 @@ import java.io.IOException;
 */
 
 public class main {
-
     public static void main(String[] args) {
-
-    	FHTML obj = new FHTML();
-
-      String teste = obj.ParseCode("title", new File("/home/chromo/workspace/WebScrapping/src/br/com/fhtml/index.html"), true, true);
-
-      if (teste != null) System.out.println(teste);
-
+        // Constantes e Variáveis
+        private final String PATH = "/...";
+        
+        // Objetos
+        FHTML obj = new FHTML();
+        File FILE = new File(PATH);
+        
+        // Execução
+        
+        //ParseCode(Meta, Arquivo ou String, {flags para status no console -> [status], [display] });
+        String teste = obj.ParseCode("title", FILE, true, true);
+        // Exibição
+        if (teste != null) System.out.println(teste);
+        
+        // Fecha
+        obj.close();
     }
-
 }
