@@ -10,4 +10,4 @@ dele. Por isso ele não está funcionando como deveria.
 Sou estudante do primeiro ano de Análise e Desenvolvimento de Sistemas, portanto o código
 não é complexo e longe de ser o mais eficiente.
 
-Toda ajuda é bem vinda! 
+Toda ajuda é bem-vinda! 
