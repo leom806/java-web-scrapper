@@ -12,33 +12,29 @@ import java.io.*;
 *
 */
 
-public class Loader {
+interface Loader {
+  /**
+  * Opções de chamada dos métodos.
+  *
+  *   status:
+  *   exibe passo a passo do processo de raspagem
+  *   
+  *   display:
+  *   exibe o conteúdo raspado
+  *   
+  *   default:
+  *   será retornado String com conteudo raspado
+  *
+  */
+  String ParseCode(String toFind, File path, boolean status, boolean display);
+  String ParseCode(String toFind, String source, boolean status, boolean display);
+  String ParseCode(boolean status, String toFind, File path);
+  String ParseCode(boolean status, String toFind, String source);
+  String ParseCode(String toFind, File path, boolean display);
+  String ParseCode(String toFind, String source, boolean display);
+  String ParseCode(String toFind, File path);
+  String ParseCode(String toFind, String source);
 
-  interface Loader {
-    /**
-    * Opções de chamada dos métodos.
-    *
-    *   status:
-    *   exibe passo a passo do processo de raspagem
-    *   
-    *   display:
-    *   exibe o conteúdo raspado
-    *   
-    *   default:
-    *   será retornado String com conteudo raspado
-    *
-    */
-    String ParseCode(String toFind, File path, boolean status, boolean display);
-    String ParseCode(String toFind, String source, boolean status, boolean display);
-    String ParseCode(boolean status, String toFind, File path);
-    String ParseCode(boolean status, String toFind, String source);
-    String ParseCode(String toFind, File path, boolean display);
-    String ParseCode(String toFind, String source, boolean display);
-    String ParseCode(String toFind, File path);
-    String ParseCode(String toFind, String source);
-
-    int Parsing(boolean status, boolean display);
-    int Close();
-  } 
-
-}
+  int Parsing(boolean status, boolean display);
+  int Close();
+} 
