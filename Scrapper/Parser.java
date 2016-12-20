@@ -36,7 +36,7 @@ public class Parser implements Loader{
     @Override
     public int Parsing(boolean status, boolean display) {
         
-        Initialize("https://pt.wikipedia.org/wiki/Amoxicilina", "As reações");
+        Initialize("https://pt.wikipedia.org/wiki/Amoxicilina", "As reações");  // Example
         
         // Faz a raspagem apenas se passar na verificação.
         if(Verify()) {
