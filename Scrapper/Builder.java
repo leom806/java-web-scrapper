@@ -3,34 +3,79 @@ package br.com.scrapper;
 import java.io.*;
 
 /*
-*
 * Nome: Builder
-* @author Leonardo Momente
-* @version 1.0.5.0
 * Data: 15-12-2016
 * Atualizado: 20-12-2016
-*
+* Descrição: Classe de implementação da Loader.
  */
 public class Builder extends Parser implements Loader {
 
     private String toFind = null;
     
-    protected StringBuilder html = new StringBuilder();
+    protected StringBuilder CODE = new StringBuilder();
     protected BufferedReader bf;
     
+    
+    /**
+     * Inicializa os objetos 
+     */
+    private void Initialize(String source) {
+
+        this.CODE.append(source);
+        
+        try {
+            CODE.append(bf.readLine());
+            while (bf.readLine() != null) {
+                CODE.append(bf.readLine());
+            }
+            CONTENT.append(CODE);
+
+        } catch (IOException e) {
+            System.out.println("Erro de IO\nErro: " + e);
+        }
+
+        try {
+            bf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void Initialize(File path) {
+        try {
+            bf = new BufferedReader(new FileReader(path));
+        } catch (FileNotFoundException e) {
+            System.out.println("Arquivo não encontrado\nErro: " + e);
+        }
+
+        try {
+            CODE.append(bf.readLine());
+            while (bf.readLine() != null) {
+                CODE.append(bf.readLine());
+            }
+
+        } catch (IOException e) {
+            System.out.println("Erro de IO\nErro: " + e);
+        }
+
+        try {
+            bf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     
     /**
      * 'Desacopla' os objetos ; Limpa as variáveis ; etc
      */
     private void Detach() {
-        html = null;
+        CODE = null;
         try {
             bf.close();
         } catch (IOException ex) {
             System.out.println("Exception: " + ex);
         }
     }
-
+    
     /**
      * Fecha o objeto e gera retorno
      */
@@ -65,31 +110,11 @@ public class Builder extends Parser implements Loader {
 
         this.toFind = toFind;
 
-        try {
-            bf = new BufferedReader(new FileReader(path));
-        } catch (FileNotFoundException e) {
-            System.out.println("Arquivo não encontrado\nErro: " + e);
-        }
-
-        try {
-            html.append(bf.readLine());
-            while (bf.readLine() != null) {
-                html.append(bf.readLine());
-            }
-
-        } catch (IOException e) {
-            System.out.println("Erro de IO\nErro: " + e);
-        }
-
-        try {
-            bf.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Initialize(path);
 
         Parsing(status, display);
 
-        return content;
+        return CONTENT.toString();
     }
 
     /**
@@ -107,11 +132,12 @@ public class Builder extends Parser implements Loader {
 
         Detach();
         this.toFind = toFind;
-        this.html.append(source);
 
+        Initialize(source);
+        
         Parsing(status, display);
 
-        return content;
+        return CONTENT.toString();
     }
 
     /**
@@ -130,26 +156,11 @@ public class Builder extends Parser implements Loader {
 
         this.toFind = toFind;
 
-        try {
-            bf = new BufferedReader(new FileReader(path));
-        } catch (FileNotFoundException e) {
-            System.out.println("Arquivo não encontrado\nErro: " + e);
-        }
-
-        try {
-            html.append(bf.readLine());
-            while (bf.readLine() != null) {
-                html.append(bf.readLine());
-            }
-
-            bf.close();
-        } catch (IOException e) {
-            System.out.println("Erro de IO\nErro: " + e);
-        }
+        Initialize(path);
 
         Parsing(status, true);
 
-        return content;
+        return CONTENT.toString();
     }
 
     /**
@@ -166,11 +177,12 @@ public class Builder extends Parser implements Loader {
 
         Detach();
         this.toFind = toFind;
-        this.html.append(source);
+        
+        Initialize(source);
 
         Parsing(status, true);
 
-        return content;
+        return CONTENT.toString();
     }
 
     /**
@@ -189,26 +201,11 @@ public class Builder extends Parser implements Loader {
 
         this.toFind = toFind;
 
-        try {
-            bf = new BufferedReader(new FileReader(path));
-        } catch (FileNotFoundException e) {
-            System.out.println("Arquivo não encontrado\nErro: " + e);
-        }
-
-        try {
-            html.append(bf.readLine());
-            while (bf.readLine() != null) {
-                html.append(bf.readLine());
-            }
-
-            bf.close();
-        } catch (IOException e) {
-            System.out.println("Erro de IO\nErro: " + e);
-        }
+        Initialize(path);
 
         Parsing(false, display);
 
-        return content;
+        return CONTENT.toString();
     }
 
     /**
@@ -225,11 +222,12 @@ public class Builder extends Parser implements Loader {
 
         Detach();
         this.toFind = toFind;
-        this.html.append(source);
+        
+        Initialize(source);
 
         Parsing(false, display);
 
-        return content;
+        return CONTENT.toString();
     }
 
     /**
@@ -247,26 +245,11 @@ public class Builder extends Parser implements Loader {
 
         this.toFind = toFind;
 
-        try {
-            bf = new BufferedReader(new FileReader(path));
-        } catch (FileNotFoundException e) {
-            System.out.println("Arquivo não encontrado\nErro: " + e);
-        }
-
-        try {
-            html.append(bf.readLine());
-            while (bf.readLine() != null) {
-                html.append(bf.readLine());
-            }
-
-            bf.close();
-        } catch (IOException e) {
-            System.out.println("Erro de IO\nErro: " + e);
-        }
+        Initialize(path);
 
         Parsing(false, false);
 
-        return content;
+        return CONTENT.toString();
     }
 
     /**
@@ -282,11 +265,12 @@ public class Builder extends Parser implements Loader {
 
         Detach();
         this.toFind = toFind;
-        this.html.append(source);
 
+        Initialize(source);
+        
         Parsing(false, false);
 
-        return content;
+        return CONTENT.toString();
     }
 
 }

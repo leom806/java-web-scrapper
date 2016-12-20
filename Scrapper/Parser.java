@@ -3,27 +3,22 @@ package br.com.scrapper;
 import java.io.*;
 
 /*
-*
 * Nome: Parser
-* @author Leonardo Momente
-* @version 1.0.5.0
 * Data: 15-12-2016
-* Atualizado: 15-12-2016
-*
+* Atualizado: 20-12-2016
+* Descrição: Objeto de conversão dos dados.
 */
 
-public class Parser implements Loader { 
+public class Parser { 
 
-	//Conversão de dados e raspagem de conteúdo
-	@Override
-  public int Parsing(boolean status, boolean display) {
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-  }
+    /* 
+     * Conversão de dados e raspagem de conteúdo.
+     */
+    public int Parsing(boolean status, boolean display) {
+        
+        
+        
+        return 0;
+    }
 
 }

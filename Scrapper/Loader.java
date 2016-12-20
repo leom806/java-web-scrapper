@@ -3,10 +3,7 @@ package br.com.scrapper;
 import java.io.*;
 
 /*
-*
 * Nome: Loader
-* @author Leonardo Momente
-* @version 1.0.5.0
 * Data: 09-08-2016
 * Atualizado: 20-12-2016
 * Descrição: Interface de carregamento, lista os métodos sobrecarregados que 
@@ -19,7 +16,7 @@ interface Loader {
     * Variável que armazena o conteúdo final da raspagem, usada no 
     * retorno dos métodos.
     */
-    String content = "";
+    StringBuilder CONTENT = new StringBuilder();
     
     /**
     * Opções de chamada dos métodos.
