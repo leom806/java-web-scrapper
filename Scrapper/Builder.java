@@ -116,11 +116,7 @@ public class Builder extends Parser {
     public String ParseCode(String toFind, File path, boolean status, boolean display) {
 
         Detach();
-
-        this.toFind = toFind;
-
         Initi(path);
-
         Parsing(status, display);
 
         return CONTENT.toString();
@@ -140,10 +136,7 @@ public class Builder extends Parser {
     public String ParseCode(String toFind, String source, boolean status, boolean display) {
 
         Detach();
-        this.toFind = toFind;
-
         Initi(source);
-        
         Parsing(status, display);
 
         return CONTENT.toString();

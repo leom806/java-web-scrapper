@@ -13,7 +13,9 @@ import org.jsoup.select.Elements;
 */
 public class Parser implements Loader{ 
 
-    public static String toFind = null;
+    protected static String AIM = "Propriedades";
+    protected static String SEARCH = "amoxicilina";
+    protected static String SOURCE = "https://pt.wikipedia.org/wiki/";
     protected Document code = null;
     
     /* 
@@ -22,7 +24,6 @@ public class Parser implements Loader{
     public int Initialize(String url, String search) {
         try {
             code = Jsoup.connect(url).get();
-            toFind = search;
             return 0;
         } catch (IOException ex) {
             System.out.println("IOException: "+ex.getMessage());
@@ -36,30 +37,37 @@ public class Parser implements Loader{
     @Override
     public int Parsing(boolean status, boolean display) {
         
-        Initialize("https://pt.wikipedia.org/wiki/Amoxicilina", "As reações");
+        Initialize(SOURCE+SEARCH, AIM);
         
         // Faz a raspagem apenas se passar na verificação.
         if(Verify()) {
-            
+            // Gera um Document com o código da URL da fonte
             Document doc = Jsoup.parse(code.toString());
-
-            String ignore = "[editar | editar código-fonte]";
-            
+            // Recebe as tags <p> e gera uma String 
             Elements tags = doc.body().getElementsByTag("p");            
             String text = tags.toString();
-            String text2 = tags.text();
+            // Recebe as tags <span> e gera uma String 
+            tags = doc.body().getElementsByTag("span");
+            String text2 = tags.toString();
             
-            if(text.contains(toFind)) {
-                String minified = text.substring(text.indexOf(toFind), text.length());
+            /**
+             * Núcleo do processo de raspagem.
+             * Primeiro é cortado da busca até o final. Depois pegamos esse corte 
+             * e limitamos até a próxima tag. Então converte-se novamente com o Jsoup
+             * para poder usar o método text().
+             */
+            if(text.contains(AIM)) {
+                String minified = text.substring(text.indexOf(AIM), text.length());
                 text = minified.substring(0, minified.indexOf("</p>"));
-                text = Jsoup.parse(text).text().toString();
-            }else{
-                text = "Não encontrado.";
+                text = Jsoup.parse(text).text();
+                System.out.println(Title(doc)+"\n");
+                System.out.println(text+"\n");
+            }else if(text2.contains(AIM)){ 
+                System.out.println(Title(doc)+"\n");
+                System.out.println(text2+"\n");
+            }{
+                System.out.println("Não encontrado.");
             }            
-            
-            System.out.println(Title(doc)+"\n");
-            System.out.println(text.replace(ignore, "")+"\n");
-            
             return 0;
         }
         
@@ -84,7 +92,7 @@ public class Parser implements Loader{
             return false;
         } 
         
-        if(!code.toString().contains(toFind)) {
+        if(!code.toString().contains(AIM)) {
             System.out.println("Não foi encontrado.");
             return false;
         }
