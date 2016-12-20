@@ -1,7 +1,7 @@
 # Content-Search Algorithm #
 
 The mainly idea is return the desired content in an amount of DOM code.
-In the begining I started developing a mapping algorithm to obtain the content without any additional library, until I'd know the XStream.
+In the begining I started developing a mapping algorithm to obtain the content without any additional library, until I'd know the Jsoup.
 
 Now I am implementing this library in the algorithm and, for this, I have changed much of it. That is the reason it does not works as it should.
 
@@ -14,7 +14,7 @@ All help is welcome!
 # Algoritmo de Busca por Conteúdo #
 
 A ideia principal é retornar o conteúdo desejado num emaranhado de código DOM.
-Inicialmente comecei desenvolvendo um algoritmo que fizesse o mapeamento e a 'raspagem' desse conteúdo sem nenhuma biblioteca adicional, até que descubro o XStream.
+Inicialmente comecei desenvolvendo um algoritmo que fizesse o mapeamento e a 'raspagem' desse conteúdo sem nenhuma biblioteca adicional, até que descubro o Jsoup.
 
 Agora estou implementando essa biblioteca no algoritmo e, para isso, alterando boa parte dele. Por isso ele não está funcionando como deveria.
 
