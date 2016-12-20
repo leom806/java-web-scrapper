@@ -13,23 +13,20 @@ import java.io.*;
 interface Loader {
     
     /* 
-    * Variável que armazena o conteúdo final da raspagem, usada no 
-    * retorno dos métodos.
+    * Variável que armazena o conteúdo final da raspagem, usada no retorno dos métodos.
     */
     StringBuilder CONTENT = new StringBuilder();
     
     /**
     * Opções de chamada dos métodos.
-    *
     *   status:
-    *   exibe passo a passo do processo de raspagem
+    *   exibe passo-a-passo do processo de raspagem.
     *   
     *   display:
-    *   exibe o conteúdo raspado
+    *   exibe o conteúdo raspado.
     *   
     *   default:
-    *   será retornado String com conteudo raspado
-    *
+    *   será retornado String com conteúdo raspado.
     */
     String ParseCode(String toFind, File path, boolean status, boolean display);
     String ParseCode(String toFind, String source, boolean status, boolean display);

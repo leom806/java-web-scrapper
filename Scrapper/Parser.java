@@ -8,17 +8,43 @@ import java.io.*;
 * Atualizado: 20-12-2016
 * Descrição: Objeto de conversão dos dados.
 */
+abstract class Parser implements Loader{ 
 
-public class Parser { 
-
+    public static String toFind = null;
+    protected String code = CONTENT.toString();
+    
     /* 
      * Conversão de dados e raspagem de conteúdo.
      */
     public int Parsing(boolean status, boolean display) {
         
+        // Faz a raspagem apenas se passar na verificação.
+        if(Verify()) {
+            
+            
+            
+        }
         
+        return -1;
+    }
+    
+    
+    /* 
+     * Verifica o código para prosseguir com a raspagem.
+     */
+    private boolean Verify() {
         
-        return 0;
+        if(code.isEmpty()) {
+            System.out.println("Código vazio.");
+            return false;
+        } 
+        
+        if(!code.contains(toFind)) {
+            System.out.println("Não foi encontrado.");
+            return false;
+        }
+        
+        return true;
     }
 
 }

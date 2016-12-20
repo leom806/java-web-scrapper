@@ -7,14 +7,11 @@ import java.io.*;
 * Data: 15-12-2016
 * Atualizado: 20-12-2016
 * Descrição: Classe de implementação da Loader.
- */
+*/
 public class Builder extends Parser implements Loader {
-
-    private String toFind = null;
-    
+ 
     protected StringBuilder CODE = new StringBuilder();
     protected BufferedReader bf;
-    
     
     /**
      * Inicializa os objetos 
