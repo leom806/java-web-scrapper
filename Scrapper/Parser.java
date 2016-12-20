@@ -53,6 +53,7 @@ public class Parser implements Loader{
             if(text.contains(toFind)) {
                 String minified = text.substring(text.indexOf(toFind), text.length());
                 text = minified.substring(0, minified.indexOf("</p>"));
+                text = Jsoup.parse(text).text().toString();
             }else{
                 text = "Não encontrado.";
             }
