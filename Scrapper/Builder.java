@@ -8,24 +8,24 @@ import java.io.*;
 * Atualizado: 20-12-2016
 * Descrição: Classe de implementação da Loader.
 */
-public class Builder extends Parser implements Loader {
+public class Builder extends Parser {
  
-    protected StringBuilder CODE = new StringBuilder();
+    protected StringBuilder code = new StringBuilder();
     protected BufferedReader bf;
     
     /**
      * Inicializa os objetos 
      */
-    private void Initialize(String source) {
+    private void Initi(String source) {
 
-        this.CODE.append(source);
+        this.code.append(source);
         
         try {
-            CODE.append(bf.readLine());
+            code.append(bf.readLine());
             while (bf.readLine() != null) {
-                CODE.append(bf.readLine());
+                code.append(bf.readLine());
             }
-            CONTENT.append(CODE);
+            CONTENT.append(code);
 
         } catch (IOException e) {
             System.out.println("Erro de IO\nErro: " + e);
@@ -37,7 +37,7 @@ public class Builder extends Parser implements Loader {
             e.printStackTrace();
         }
     }
-    private void Initialize(File path) {
+    private void Initi(File path) {
         try {
             bf = new BufferedReader(new FileReader(path));
         } catch (FileNotFoundException e) {
@@ -45,9 +45,9 @@ public class Builder extends Parser implements Loader {
         }
 
         try {
-            CODE.append(bf.readLine());
+            code.append(bf.readLine());
             while (bf.readLine() != null) {
-                CODE.append(bf.readLine());
+                code.append(bf.readLine());
             }
 
         } catch (IOException e) {
@@ -65,7 +65,7 @@ public class Builder extends Parser implements Loader {
      * 'Desacopla' os objetos ; Limpa as variáveis ; etc
      */
     private void Detach() {
-        CODE = null;
+        code = null;
         try {
             bf.close();
         } catch (IOException ex) {
@@ -76,7 +76,6 @@ public class Builder extends Parser implements Loader {
     /**
      * Fecha o objeto e gera retorno
      */
-    @Override
     public int Close() {
         try {
             Detach();
@@ -86,10 +85,23 @@ public class Builder extends Parser implements Loader {
         }
         return -1;
     }
-
+    
     /**
      * Métodos Principais Sobrecarregados e Sobrescritos
      */
+    
+    /**
+    * Opções de chamada dos métodos.
+    *   status:
+    *   exibe passo-a-passo do processo de raspagem.
+    *   
+    *   display:
+    *   exibe o conteúdo raspado.
+    *   
+    *   default:
+    *   será retornado String com conteúdo raspado.
+    */
+    
     /**
      * Método sobrecarregado para busca.
      *
@@ -100,14 +112,14 @@ public class Builder extends Parser implements Loader {
      * @since 1.0
      * @version 1.0
      */
-    @Override
+
     public String ParseCode(String toFind, File path, boolean status, boolean display) {
 
         Detach();
 
         this.toFind = toFind;
 
-        Initialize(path);
+        Initi(path);
 
         Parsing(status, display);
 
@@ -124,150 +136,17 @@ public class Builder extends Parser implements Loader {
      * @since 1.0
      * @version 1.0
      */
-    @Override
+
     public String ParseCode(String toFind, String source, boolean status, boolean display) {
 
         Detach();
         this.toFind = toFind;
 
-        Initialize(source);
+        Initi(source);
         
         Parsing(status, display);
 
         return CONTENT.toString();
     }
-
-    /**
-     * Método sobrecarregado para busca.
-     *
-     * @param flag de status da busca
-     * @param palavra buscada
-     * @param arquivo fonte
-     * @since 1.0
-     * @version 1.0
-     */
-    @Override
-    public String ParseCode(boolean status, String toFind, File path) {
-
-        Detach();
-
-        this.toFind = toFind;
-
-        Initialize(path);
-
-        Parsing(status, true);
-
-        return CONTENT.toString();
-    }
-
-    /**
-     * Método sobrecarregado para busca.
-     *
-     * @param flag de status da busca
-     * @param palavra buscada
-     * @param String fonte
-     * @since 1.0
-     * @version 1.0
-     */
-    @Override
-    public String ParseCode(boolean status, String toFind, String source) {
-
-        Detach();
-        this.toFind = toFind;
-        
-        Initialize(source);
-
-        Parsing(status, true);
-
-        return CONTENT.toString();
-    }
-
-    /**
-     * Método sobrecarregado para busca.
-     *
-     * @param palavra buscada
-     * @param arquivo fonte
-     * @param flag de display de resultados
-     * @since 1.0
-     * @version 1.0
-     */
-    @Override
-    public String ParseCode(String toFind, File path, boolean display) {
-
-        Detach();
-
-        this.toFind = toFind;
-
-        Initialize(path);
-
-        Parsing(false, display);
-
-        return CONTENT.toString();
-    }
-
-    /**
-     * Método sobrecarregado para busca.
-     *
-     * @param palavra buscada
-     * @param String fonte
-     * @param flag de display de resultados
-     * @since 1.0
-     * @version 1.0
-     */
-    @Override
-    public String ParseCode(String toFind, String source, boolean display) {
-
-        Detach();
-        this.toFind = toFind;
-        
-        Initialize(source);
-
-        Parsing(false, display);
-
-        return CONTENT.toString();
-    }
-
-    /**
-     * Método sobrecarregado para busca.
-     *
-     * @param palavra buscada
-     * @param arquivo fonte
-     * @since 1.0
-     * @version 1.0
-     */
-    @Override
-    public String ParseCode(String toFind, File path) {
-
-        Detach();
-
-        this.toFind = toFind;
-
-        Initialize(path);
-
-        Parsing(false, false);
-
-        return CONTENT.toString();
-    }
-
-    /**
-     * Método sobrecarregado para busca.
-     *
-     * @param palavra buscada
-     * @param String fonte
-     * @since 1.0
-     * @version 1.0
-     */
-    @Override
-    public String ParseCode(String toFind, String source) {
-
-        Detach();
-        this.toFind = toFind;
-
-        Initialize(source);
-        
-        Parsing(false, false);
-
-        return CONTENT.toString();
-    }
-
+    
 }

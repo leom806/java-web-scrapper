@@ -1,6 +1,6 @@
 package br.com.scrapper;
 
-import java.io.*;
+import org.jsoup.nodes.Document;
 
 /*
 * Nome: Loader
@@ -16,26 +16,7 @@ interface Loader {
     * Variável que armazena o conteúdo final da raspagem, usada no retorno dos métodos.
     */
     StringBuilder CONTENT = new StringBuilder();
-    
-    /**
-    * Opções de chamada dos métodos.
-    *   status:
-    *   exibe passo-a-passo do processo de raspagem.
-    *   
-    *   display:
-    *   exibe o conteúdo raspado.
-    *   
-    *   default:
-    *   será retornado String com conteúdo raspado.
-    */
-    String ParseCode(String toFind, File path, boolean status, boolean display);
-    String ParseCode(String toFind, String source, boolean status, boolean display);
-    String ParseCode(boolean status, String toFind, File path);
-    String ParseCode(boolean status, String toFind, String source);
-    String ParseCode(String toFind, File path, boolean display);
-    String ParseCode(String toFind, String source, boolean display);
-    String ParseCode(String toFind, File path);
-    String ParseCode(String toFind, String source);
 
-    int Close();
+    String Title(Document code);
+    int Parsing(boolean status, boolean display);
 } 
