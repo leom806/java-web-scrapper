@@ -23,13 +23,12 @@ public class Builder extends Parser implements Loader {
      * 'Desacopla' os objetos ; Limpa as variáveis ; etc
      */
     private void Detach() {
-        //
-        //
-        //
-        //
-        //
-        //
-        //
+        html = null;
+        try {
+            bf.close();
+        } catch (IOException ex) {
+            System.out.println("Exception: " + ex);
+        }
     }
 
     /**
