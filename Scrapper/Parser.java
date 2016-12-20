@@ -42,7 +42,6 @@ public class Parser implements Loader{
         if(Verify()) {
             
             Document doc = Jsoup.parse(code.toString());
-            //Element link = doc.select("a").first();
 
             String ignore = "[editar | editar código-fonte]";
             
@@ -56,11 +55,10 @@ public class Parser implements Loader{
                 text = Jsoup.parse(text).text().toString();
             }else{
                 text = "Não encontrado.";
-            }
+            }            
             
-            // Salvar a região que dá "match" entre o texto das tags e o texto sem tags.
-            
-            System.out.println(text.replace(ignore, ""));
+            System.out.println(Title(doc)+"\n");
+            System.out.println(text.replace(ignore, "")+"\n");
             
             return 0;
         }

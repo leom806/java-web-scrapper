@@ -3,6 +3,8 @@
 * @author Leonardo Momente
 * @version 1.0.5.1
 * 
+* LIBRARY: Jsoup 1.10.1
+* 
 * Last Update: 20-12-2016
 * DESCRIPTION: The Builder class extends Parser and both implements the Loader interface. 
 * Builder has overloadeds methods for parsing. They overwrite the interface.
