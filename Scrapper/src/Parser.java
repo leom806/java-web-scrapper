@@ -11,7 +11,7 @@ import org.jsoup.select.Elements;
 * Atualizado: 20-12-2016
 * Descrição: Objeto de conversão dos dados.
 */
-public class Parser implements Loader{ 
+public class Parser extends Builder implements Loader{ 
 
     protected static String AIM = "Propriedades";
     protected static String SEARCH_QUERY = "Tylenol";
