@@ -7,6 +7,6 @@ package br.com.scrapper;
 * Atualizado: 20-12-2016
 * Descrição: Classe de extensão da Parser.
 */
-public class Builder extends Parser {
+public class Builder {
     
 }
