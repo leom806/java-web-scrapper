@@ -35,9 +35,9 @@ public class Parser extends Builder implements Loader{
             code = Jsoup.connect(url).get();
             return true;
         } catch (IOException ex) {
-            System.out.println("IOException: "+ex.getMessage());
+            print("IOException: "+ex.getMessage());
         } catch(Exception ev) {
-            System.out.println("Exception: "+ev.getMessage());
+            print("Exception: "+ev.getMessage());
         }
         return false;
     }
@@ -47,17 +47,20 @@ public class Parser extends Builder implements Loader{
     * 
     * @param status exibe notificações sobre a raspagem.
     * @param display exibe os resultados da raspagem.
-    * @return conteudo da raspagem.
+    * @return conteúdo da raspagem.
     */
     @Override
     public String Parsing(boolean status, boolean display) {
 
-        if(status) System.out.println("> Inicializando.\n");
+        if(status) print("> Inicializando.\n");
             
+        SEARCH_QUERY = get("Página: ");
+        AIM = get("Busca: ");
+        
         if(Initialize(SOURCE+SEARCH_QUERY, AIM)) 
-            System.out.println("Pronto.\n");
+            print("Pronto.\n");
         else
-            System.out.println("\nErro na inicialização\n");
+            print("\nErro na inicialização\n");
 
         // Faz a raspagem apenas se passar na verificação.
         if(Verify()) {
@@ -71,13 +74,13 @@ public class Parser extends Builder implements Loader{
 
             // Exibe as opções
             if(display) {
-                System.out.println("> Opções:\n");
+                print("> Opções:\n");
                 for(String opcao : Options(doc, MAIN_TAG)) {
-                    System.out.println(opcao);
+                    print(opcao);
                 }
             }
             
-            if (display) System.out.print("\n> Busca: "+AIM);
+            if (display) print("\n> Busca: "+AIM);
             
            /**
             * Núcleo do processo de raspagem.
@@ -92,12 +95,12 @@ public class Parser extends Builder implements Loader{
             */
             try {
                 if(text.contains(AIM)) {
-                    if(status) System.out.println("\n> Método Alternativo.\n");
+                    if(status) print("\n> Método Alternativo.\n");
                     String minified = text.substring(text.indexOf(AIM), text.length());
                     text = minified.substring(0, minified.indexOf("</p>"));
                     text = Jsoup.parse(text).text();
-                    if(display) System.out.println(Title(doc)+"\n");
-                    if(display) System.out.println(text+"\n");
+                    if(display) print(Title(doc)+"\n");
+                    if(display) print(text+"\n");
                     // Salva conteúdo para retorno em StringBuilder static.
                     CONTENT = new StringBuilder().append(text);
                     
@@ -108,17 +111,17 @@ public class Parser extends Builder implements Loader{
                 *
                 */
                 }else if(all.contains(AIM)) { 
-                    if(status) System.out.println("\n> Método Principal.\n");
-                    if(display) System.out.println(Title(doc));
+                    if(status) print("\n> Método Principal.\n");
+                    if(display) print(Title(doc));
                     
                     
                     
-                    if(display) System.out.println(all+"\n");
+                    if(display) print(all+"\n");
                 }           
             }catch(StringIndexOutOfBoundsException ex) {
-                System.out.println("Erro em limite de String.");
+                print("Erro em limite de String.");
             }catch(Exception ev) {
-                System.out.println("Erro: "+ev.getMessage());
+                print("Erro: "+ev.getMessage());
             }
             
             if(CONTENT != null)
@@ -166,22 +169,22 @@ public class Parser extends Builder implements Loader{
         try {
             boolean verify_code = code.toString().isEmpty();
         }catch(NullPointerException ex) {
-            System.out.println("Código vazio.");
+            print("Código vazio.\n");
             return false;
         }
         
-        if(AIM.isEmpty()) {
-            System.out.println("Busca vazia.");
+        if(AIM == null) {
+            print("Busca vazia.\n");
             return false;
         }
         
-        if(SOURCE.isEmpty()) {
-            System.out.println("Não há fonte.");
+        if(SOURCE == null) {
+            print("Não há fonte.\n");
             return false;
         }
         
         if(!code.toString().contains(AIM)) {
-            System.out.println("Não foi encontrado.");
+            print("Não foi encontrado.\n");
             return false;
         }
         

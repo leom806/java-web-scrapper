@@ -7,8 +7,14 @@ package br.com.scrapper;
 * Descrição: Classe principal; Execução em console.
 */
 
-public class Main {
-    public static void main(String[] args) {
+public class Main extends Builder{
+    
+    public Main() {
+        show("Iniciando.");
         new Parser().Parsing(true, true);
+    }
+    
+    public static void main(String[] args) {
+        Main m = new Main();
     } 
 }
