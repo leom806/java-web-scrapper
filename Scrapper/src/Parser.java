@@ -5,7 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-/*
+/**
 * Nome: Parser
 * Data: 15-12-2016
 * Atualizado: 20-12-2016
@@ -13,23 +13,23 @@ import org.jsoup.select.Elements;
 */
 public class Parser extends Builder implements Loader{ 
 
-    protected static String AIM = "Propriedades";
-    protected static String SEARCH_QUERY = "Tylenol";
+    protected static String AIM = "É pó";
+    protected static String SEARCH_QUERY = "Amoxicilina";
     protected static String MAIN_TAG = "span.mw-headline"; // Tag principal de cada fonte de buscas.
-    protected static String SOURCE = "https://pt.wikipedia.org/wiki/";
-    /* 
-    * Variável que armazena o conteúdo final da raspagem, usada no retorno dos métodos.
-    */
+    protected static String SOURCE = "https://pt.wikipedia.org/wiki/"; 
+    // Variável que armazena o conteúdo final da raspagem, usada no retorno dos métodos.
     protected static StringBuilder CONTENT = null;
     protected Document code = null;
     
     private static final String PARSING_ERROR = "Erro durante processo de raspagem.";
         
-    /* 
-     * Conecta ao site e recebe o código fonte.
-     * @param String da URL de acesso.
-     * @param String da palavra chave da busca em conteúdo.
-     */
+   /**
+    * Conecta ao site e recebe o código fonte.
+    * 
+    * @param url do servidor de dados.
+    * @param search palavra chave da busca em conteúdo.
+    * @return retorna o êxito da inicialização. 
+    */
     public boolean Initialize(String url, String search) {
         try {
             code = Jsoup.connect(url).get();
@@ -42,13 +42,17 @@ public class Parser extends Builder implements Loader{
         return false;
     }
     
-    /* 
-     * Conversão de dados e raspagem de conteúdo.
-     */
+   /**
+    * Conversão de dados e raspagem de conteúdo.
+    * 
+    * @param status exibe notificações sobre a raspagem.
+    * @param display exibe os resultados da raspagem.
+    * @return conteudo da raspagem.
+    */
     @Override
     public String Parsing(boolean status, boolean display) {
 
-        if(status) System.out.println("> Inicializando.");
+        if(status) System.out.println("> Inicializando.\n");
             
         if(Initialize(SOURCE+SEARCH_QUERY, AIM)) 
             System.out.println("Pronto.\n");
@@ -66,33 +70,37 @@ public class Parser extends Builder implements Loader{
             String text = tags.toString();
 
             // Exibe as opções
-            System.out.println("Opções: \n");
-            String[] opcoes = doc.select(MAIN_TAG).toString().split("\n");
-            for(int i = 0; i < opcoes.length-1; i++) {
-                System.out.println("- "+Jsoup.parse(opcoes[i]).text());
+            if(display) {
+                System.out.println("> Opções:\n");
+                for(String opcao : Options(doc, MAIN_TAG)) {
+                    System.out.println(opcao);
+                }
             }
             
-            /**
-             * Núcleo do processo de raspagem.
-             */
+            if (display) System.out.print("\n> Busca: "+AIM);
             
-            /*
-             * Processo de raspagem alternativo. Usa parte do texto para buscar.
-             * 
-             * Primeiro é cortado da busca até o final. Depois pegamos esse corte 
-             * e limitamos até a próxima tag. Então converte-se novamente com o Jsoup
-             * para poder usar o método text().
-             */
+           /**
+            * Núcleo do processo de raspagem.
+            */
+            
+           /*
+            * Processo de raspagem alternativo. Usa parte do texto para buscar.
+            * 
+            * Primeiro é cortado da busca até o final. Depois pegamos esse corte 
+            * e limitamos até a próxima tag. Então converte-se novamente com o Jsoup
+            * para poder usar o método text().
+            */
             try {
                 if(text.contains(AIM)) {
                     if(status) System.out.println("\n> Método Alternativo.\n");
                     String minified = text.substring(text.indexOf(AIM), text.length());
                     text = minified.substring(0, minified.indexOf("</p>"));
                     text = Jsoup.parse(text).text();
-                    System.out.println(Title(doc)+"\n");
-                    System.out.println(text+"\n");
+                    if(display) System.out.println(Title(doc)+"\n");
+                    if(display) System.out.println(text+"\n");
                     // Salva conteúdo para retorno em StringBuilder static.
                     CONTENT = new StringBuilder().append(text);
+                    
                /*
                 * Principal processo de raspagem. Usa as opcoes para buscar.
                 * 
@@ -101,15 +109,14 @@ public class Parser extends Builder implements Loader{
                 */
                 }else if(all.contains(AIM)) { 
                     if(status) System.out.println("\n> Método Principal.\n");
-                    System.out.println(Title(doc));
+                    if(display) System.out.println(Title(doc));
                     
-                    System.out.println();
                     
-                    //System.out.println(all+"\n");
+                    
+                    if(display) System.out.println(all+"\n");
                 }           
             }catch(StringIndexOutOfBoundsException ex) {
                 System.out.println("Erro em limite de String.");
-                ex.printStackTrace();
             }catch(Exception ev) {
                 System.out.println("Erro: "+ev.getMessage());
             }
@@ -121,17 +128,38 @@ public class Parser extends Builder implements Loader{
         return PARSING_ERROR;
     }
     
-    /* 
-     * Busca o título com o Jsoup.
-     */
+   /** 
+    * Busca o título com o Jsoup.
+    * 
+    * @param code Document da biblioteca Jsoup.
+    * @return retorna o título da página.
+    */
     @Override
     public String Title(Document code) {
         return code.title();
     }
        
-    /* 
-     * Verifica o código para prosseguir com a raspagem.
-     */
+   /**
+    * Retorna lista com títulos do site em opções de busca.
+    *
+    * @param doc Document da biblioteca Jsoup.
+    * @param tag_class String da class html que identifica as opções.
+    * @return retorna as opções da página.
+    */
+    @Override
+    public String[] Options(Document doc, String tag_class) {
+        String[] opcoes = doc.select(tag_class).toString().split("\n");
+        for(int i = 0; i < opcoes.length; i++) {
+            opcoes[i] = Jsoup.parse(opcoes[i]).text();
+        }
+        return opcoes;
+    }
+    
+   /**
+    * Verifica o código para prosseguir com a raspagem.
+    * 
+    * @return retorna o êxito da verificação.
+    */
     @Override
     public boolean Verify() {
         
