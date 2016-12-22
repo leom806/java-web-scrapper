@@ -13,13 +13,13 @@ import org.jsoup.select.Elements;
 */
 public class Parser extends Builder implements Loader{ 
 
-    protected static String AIM = "É pó";
-    protected static String SEARCH_QUERY = "Amoxicilina";
-    protected static String MAIN_TAG = "span.mw-headline"; // Tag principal de cada fonte de buscas.
+    protected static String AIM = null;
+    protected static String SEARCH_QUERY = null;
+    protected static String MAIN_TAG = "span.mw-headline"; // Tag principal da fonte de buscas.
     protected static String SOURCE = "https://pt.wikipedia.org/wiki/"; 
     // Variável que armazena o conteúdo final da raspagem, usada no retorno dos métodos.
     protected static StringBuilder CONTENT = null;
-    protected Document code = null;
+    protected Document code = null, doc = null;
     
     private static final String PARSING_ERROR = "Erro durante processo de raspagem.";
         
@@ -27,10 +27,9 @@ public class Parser extends Builder implements Loader{
     * Conecta ao site e recebe o código fonte.
     * 
     * @param url do servidor de dados.
-    * @param search palavra chave da busca em conteúdo.
     * @return retorna o êxito da inicialização. 
     */
-    public boolean Initialize(String url, String search) {
+    public boolean Initialize(String url) {
         try {
             code = Jsoup.connect(url).get();
             return true;
@@ -52,40 +51,50 @@ public class Parser extends Builder implements Loader{
     @Override
     public String Parsing(boolean status, boolean display) {
 
-        if(status) print("> Inicializando.\n");
+        if(status) print("> Inicializando.");
             
         SEARCH_QUERY = get("Página: ");
-        AIM = get("Busca: ");
         
-        if(Initialize(SOURCE+SEARCH_QUERY, AIM)) 
-            print("Pronto.\n");
+        if(Initialize(SOURCE+SEARCH_QUERY)) 
+            print("> Pronto.");
         else
             print("\nErro na inicialização\n");
-
+        
+        // Gera um Document com o código da URL da fonte
+        doc = Jsoup.parse(code.toString());
+        
+        try {
+            AIM = get("Busca: ");
+            if (AIM == null) {
+                // Diálogo com as opções para seleção
+                AIM = get("Opções:", (Object[]) Options(doc, MAIN_TAG));
+                if (display) print("> Buscando: "+AIM);
+            }
+        }catch (NullPointerException ex) {
+            print(ex.getMessage());
+        }
+        
         // Faz a raspagem apenas se passar na verificação.
         if(Verify()) {
             
-            // Gera um Document com o código da URL da fonte
-            Document doc = Jsoup.parse(code.toString());
-            // Recebe as tags <p> e gera uma String 
+             // Recebe as tags <p> e gera uma String 
             Elements tags = doc.body().getElementsByTag("p");
             String all = doc.body().text();
             String text = tags.toString();
 
             // Exibe as opções
             if(display) {
-                print("> Opções:\n");
+                print("> Opções:");
                 for(String opcao : Options(doc, MAIN_TAG)) {
                     print(opcao);
                 }
             }
             
-            if (display) print("\n> Busca: "+AIM);
-            
            /**
             * Núcleo do processo de raspagem.
             */
-            
+
+           
            /*
             * Processo de raspagem alternativo. Usa parte do texto para buscar.
             * 
@@ -95,10 +104,10 @@ public class Parser extends Builder implements Loader{
             */
             try {
                 if(text.contains(AIM)) {
-                    if(status) print("\n> Método Alternativo.\n");
+                    if(status) print("> Método Alternativo.");
                     String minified = text.substring(text.indexOf(AIM), text.length());
                     text = minified.substring(0, minified.indexOf("</p>"));
-                    text = Jsoup.parse(text).text();
+                    text = clean(text); // Limpeza das tags html.
                     if(display) print(Title(doc)+"\n");
                     if(display) print(text+"\n");
                     // Salva conteúdo para retorno em StringBuilder static.
@@ -111,8 +120,8 @@ public class Parser extends Builder implements Loader{
                 *
                 */
                 }else if(all.contains(AIM)) { 
-                    if(status) print("\n> Método Principal.\n");
-                    if(display) print(Title(doc));
+                    if(status) print("> Método Principal.");
+                    if(display) print(Title(doc)+"\n");
                     
                     
                     
@@ -187,6 +196,8 @@ public class Parser extends Builder implements Loader{
             print("Não foi encontrado.\n");
             return false;
         }
+        
+        print("> Verificado.");
         
         return true;
     }
