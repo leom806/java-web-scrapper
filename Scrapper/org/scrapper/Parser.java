@@ -9,7 +9,7 @@ import org.jsoup.select.Elements;
 /**
 * Nome: Parser
 * Data: 15-12-2016
-* Atualizado: 23-12-2016
+* Atualizado: 26-12-2016
 * Descrição: Objeto de conversão dos dados.
 */
 public class Parser extends GUIStream implements Loader{ 
@@ -36,7 +36,7 @@ public class Parser extends GUIStream implements Loader{
     private final String CONTENT_TAG = "#mw-content-text"; // Tag de conteudo.
     private final String SOURCE = "https://pt.wikipedia.org/wiki/"; 
     
-    private static final String VERSION = "1.0.5.3";
+    private static final String VERSION = "1.0.5.4";
     private static final String PARSING_ERROR = "Erro durante processo de raspagem.";
     
     /*

@@ -6,7 +6,7 @@ import org.jsoup.Jsoup;
 /**
 * Nome: GUIStream
 * Data: 15-12-2016
-* Atualizado: 24-12-2016
+* Atualizado: 26-12-2016
 * Descrição: Classe de extensão da Parser.
 */
 public class GUIStream{
