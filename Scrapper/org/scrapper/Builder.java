@@ -41,7 +41,7 @@ public class Builder {
         try{
             if(args.startsWith("> ")) {
                 args = ANSI_BLUE+args.replace("\n", "");
-                System.out.println(args+"\n");
+                System.out.println(args);
             }else
                 System.out.println(ANSI_RESET+args);
         }catch(Exception ex){

@@ -14,4 +14,5 @@ interface Loader {
     String Title(Document doc);
     String[] Options(Document doc, String key);
     String Parsing(boolean status, boolean display);
+    void Close();
 } 
