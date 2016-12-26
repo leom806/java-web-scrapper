@@ -10,9 +10,14 @@ import org.jsoup.nodes.Document;
 */
 
 interface Loader {
-    boolean Verify();
+    String MainParseMethod(String code);
+    String LastParseMethod();
+    String AlternativeParseMethod(String code);
+    String Parsing(String query);
+    String Core();
     String Title(Document doc);
     String[] Options(Document doc, String key);
-    String Parsing(boolean status, boolean display);
+    boolean Initialize(String url);
+    boolean Verify();
     void Close();
 } 

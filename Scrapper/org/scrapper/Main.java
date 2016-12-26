@@ -9,11 +9,9 @@ package org.scrapper;
 
 public class Main extends Parser{
     
-    @SuppressWarnings("OverridableMethodCallInConstructor")
+    @SuppressWarnings({"OverridableMethodCallInConstructor", "ResultOfObjectAllocationIgnored"})
     public Main() {
-        show("Iniciando Scrapper");
-        print(Parsing(true, false));
-        Close();   // retorna 0 se executado com sucesso.
+        new GUI().setVisible(true);
     }
     
     public static void main(String[] args) {
