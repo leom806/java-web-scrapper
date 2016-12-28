@@ -7,36 +7,35 @@ import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 
 /**
-* Nome: Graphical User Interface
-* Data: 26-12-2016
-* Atualizado: 26-12-2016
-* Descrição: Classe principal; Execução em interface gráfica.
+* Name: Graphical User Interface
+* Date: 26-12-2016
+* Update: 27-12-2016
+* Description: GUI implementation class.s
 */
 
 public class GUI extends javax.swing.JFrame {
 
     private StringBuilder sb;
-    private String last_search = "";
-    private int status_iterator = 0;
-    private Parser parser;
-    private DefaultListModel dm;
+    private String lastSearch = "";
+
+    private int statusIterator = 0;
     private boolean started = false;
-    private boolean new_search = true;
-    
+    private boolean newSearch = true;
+
+    private DefaultListModel dm;
+    private final Parser parser;
+
     /**
-     * GUI construtor.
+     * GUI constructor.
      */
     public GUI() {
         this.dm = new DefaultListModel();
-        initComponents();
-       
-        parser = new Parser(true, false);
-        jLabel1.setText("Fonte: "+parser.getSource());
-        
+        this.sb = new StringBuilder();
         DefaultListModel dlm = new DefaultListModel();
-        sb = new StringBuilder();
         
-        // Define a saída principal como o jTextArea.
+        initComponents();
+        
+        // Define the default stream output as the jList.
         OutputStream out = new OutputStream() {
             @Override
             public void write(int b) throws IOException {
@@ -44,10 +43,10 @@ public class GUI extends javax.swing.JFrame {
                     return;
 
                 if (b == '\n') {
-                    final String text = sb.toString() + "\n";
+                    final String text = sb.toString().replace("[34m", "").replace("[0m", "").replace("[31m", "") + "\n";
                     SwingUtilities.invokeLater(() -> {
-                        dlm.add(status_iterator, text);
-                        status_iterator++;
+                        dlm.add(statusIterator, text);
+                        statusIterator++;
                         jList2.setModel(dlm);
                     });
                     sb.setLength(0);
@@ -57,13 +56,12 @@ public class GUI extends javax.swing.JFrame {
                 sb.append((char) b);
             }
         };
-        
         System.setOut(new PrintStream(out));
+        parser = new Parser(true, false);
+        jLabel1.setText("Fonte: "+parser.getSource());
     }
 
-    /**
-     * Esse método é chamado pelo construtor pra inicializar o Form.
-     */
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -203,29 +201,40 @@ public class GUI extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
-        // Verifica se é uma nova pesquisa
-        new_search = !last_search.equals(jTextField1.getText());
+        String query = jTextField1.getText();
         
-        // Faz a busca e exibe no JTextArea
-        if (started && !new_search) {
-            jTextArea1.setText(parser.Core());
-        }else {
-            jTextArea1.setText(parser.Parsing(jTextField1.getText()));
-            last_search = jTextField1.getText();
-            started = true;
+        try{
+            Search(query);
+        }catch(final Exception ex){
+            Builder.show(ex.getMessage());
         }
-        // Coloca as opções na JList
-        String[] opcoes = parser.getOptions();
-        int i = 0;
-        dm.clear();
-        for(String opcao : opcoes) {
-            dm.add(i, opcao);
-            i++;
-        }
-        jList1.setModel(dm);
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void Search(String query) throws Exception{
+        // Verify if it is a new search
+        newSearch = !lastSearch.equals(jTextField1.getText());
+        
+        // Do the search and show in JTextArea
+        if (started && !newSearch) {
+            jTextArea1.setText(parser.Core());
+        }else {
+            jTextArea1.setText(parser.Parsing(query));
+            lastSearch = jTextField1.getText();
+            started = true;
+        }
+        
+        // Put the options in the JList
+        String[] options = parser.getOptions();
+        int i = 0;
+        dm.clear();
+        for(String option : options) {
+            dm.add(i, option);
+            i++;
+        }
+        jList1.setModel(dm);
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;

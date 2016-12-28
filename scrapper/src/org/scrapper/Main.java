@@ -1,20 +1,20 @@
 package org.scrapper;
 
 /**
-* Nome: Main
-* Data: 20-12-2016
-* Atualizado: 26-12-2016
-* Descrição: Classe principal; Execução em console com Dialogs.
+* Name: Main
+* Date: 20-12-2016
+* Update: 27-12-2016
+* Description: Main class.
 */
 
 public class Main extends Parser{
-    
-    @SuppressWarnings({"OverridableMethodCallInConstructor", "ResultOfObjectAllocationIgnored"})
+
+    @SuppressWarnings({"ResultOfObjectAllocationIgnored"})
     public Main() {
-        new GUI().setVisible(true);
+        new GUI().setVisible(true);        
     }
-    
+
     public static void main(String[] args) {
         Main m = new Main();
-    } 
+    }
 }

@@ -7,376 +7,385 @@ import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 /**
-* Nome: Parser
-* Data: 15-12-2016
-* Atualizado: 26-12-2016
-* Descrição: Objeto de conversão dos dados.
+* Name: Parser
+* Date: 15-12-2016
+* Update: 27-12-2016
+* Description: Conversion object class.
 */
-public class Parser extends GUIStream implements Loader{ 
+public class Parser extends Builder implements Loader{
 
     /*
     * =========================    VARIABLES    ================================
     */
-    
-    private String AIM = null;
-    private String NEXT = null;
-    private String SEARCH_QUERY = null;
-    
-    private String[] completo = null;
-    private Document code = null, doc = null;
+
     private boolean status = false, display = false;
-    
-    private static String CONTENT = null;
-    
+    private String aim = null, nextOption = null, searchQuery = null, content = null;
+    private String[] allOptions = null;
+    private Document code = null, doc = null;
+
     /*
     * =========================    CONSTANTS    ================================
     */
+
+    private final String MAIN_TAG = "span.mw-headline"; // tag and id or class that indicates main titles in the page
+    private final String CONTENT_TAG = "#mw-content-text"; // id or class that indicates the content to scrap
+    private final String SOURCE = "https://pt.wikipedia.org/wiki/"; // Website to scrap
+ 
+    /*
+    * =========================    MESSAGES    =================================
+    */
     
-    private final String MAIN_TAG = "span.mw-headline"; // Tag principal da fonte de buscas. 
-    private final String CONTENT_TAG = "#mw-content-text"; // Tag de conteudo.
-    private final String SOURCE = "https://pt.wikipedia.org/wiki/"; 
-    
-    private static final String VERSION = "1.0.5.4";
-    private static final String PARSING_ERROR = "Erro durante processo de raspagem.";
+    private final String INIT_MESSAGE = " JScrapper "+Loader.VERSION+".";
+    private final String PARSING_ERROR_MESSAGE = "Error in scrapping proccess.";
+    private final String NOT_FOUND_MESSAGE = "Not found.";
+    private final String NULL_ARGS_ERROR = "Should not use null arguments here.";
+    private final String CONNECTION_FAILED_MESSAGE = "Could not connect to the page.";
+    private final String ALL_OPTIONS_MESSAGE = "See All";
+    private final String NOT_CONNECTED_MESSAGE = "Parser is not connected to the page.";
+    private final String UNKNOW_ERROR_MESSAGE = "Unknow error.";
     
     /*
     * =========================    CONSTRUCTORS    =============================
     */
-    
+
     @SuppressWarnings("OverridableMethodCallInConstructor")
     public Parser() {
-        print("JScrapper "+VERSION);
+        this(false, false);
     }
-    
+
     @SuppressWarnings("OverridableMethodCallInConstructor")
     public Parser(boolean status, boolean display) {
-        print("JScrapper "+VERSION);
+        print(INIT_MESSAGE);
         this.status = status;
         this.display = display;
     }
-    
+
     /*
     * =====================    GETTERS & SETTERS    ============================
     */
-    
+
     public String getSource() {
         return SOURCE;
     }
-    
+
     public String[] getOptions() {
-        if (completo != null)
-            return completo;
-        return new String[]{""};
+        if (allOptions != null)
+            return allOptions;
+        return new String[]{NOT_FOUND_MESSAGE};
     }
-    
+
     /*
     * ===========================    METHODS    ================================
     */
 
     /**
-     *  Método de raspagem principal.
+     * Mainly parse method.
      *
      * @param code
-     * @return 
+     * @return
      */
     @Override
     public String MainParseMethod(String code) {
         if(status) {
-            print("> Metodo Principal.");
+            print("> Main method.");
         }
         if(display) print(Title(doc)+"\n");
 
         Whitelist wl = new Whitelist();
         wl.addTags("span", "p");
 
+        // Clean using the allowed tags of the whitelist
         String clean = Jsoup.clean(code, wl);
 
+        /*
+        * 
+        * SET THIS UP FOR THE WEBPAGE
+        * IT SIMPLE BUT REQUIRES SOME RESEARCH ON THE SITE SOURCE-CODE
+        *
+        */
         clean = clean.replace("<span><span>[</span>editar<span> | </span>editar código-fonte<span>]</span></span>", " ");
 
-        String ocurrency = "<span>"+AIM+"</span>";
-        String limit = "<span>"+NEXT+"</span>";
+        // YOU MUST CHANGE THIS TAG
+        String ocurrency = "<span>"+aim+"</span>";
+        String limit = "<span>"+nextOption+"</span>";
 
-        clean = clean.substring(clean.lastIndexOf(ocurrency)+ocurrency.length()).replace("\n", "ʘ");
-        
-        try{
+        clean = clean.substring(clean.lastIndexOf(ocurrency)+ocurrency.length());
+        clean = clean.replace("\n", "ʘ"); // Replaces \n with a joker to keep the \n after
+
+        if(clean.contains(limit))
             clean = clean.substring(0, clean.indexOf(limit));
-        }catch(StringIndexOutOfBoundsException ex){
-            
-        }
-        
-        String content = Jsoup.parse(clean).text().replace("ʘ", "\n");
+
+        content = clear(clean).replace("ʘ", "\n");
 
         if(display) print(content);
-        CONTENT = content;
-        
-        return CONTENT;
+
+        return content;
     }
-    
+
     /**
-     *  Método de raspagem alternativo.
+     * Alternatively parse method, used if main fails; less accurate.
      *
      * @param code
-     * @return 
+     * @return
      */
     @Override
     public String AlternativeParseMethod(String code) {
-        try {               
-            if(code.contains(AIM)) {
+        try {
+            if(code.contains(aim) && code.contains("</p>")) {
                 if(status) {
-                    print("> Metodo Alternativo.");
+                    print("> Alternative method.");
                 }
-                String minified = code.substring(code.indexOf(AIM), code.length());
+                String minified = code.substring(code.indexOf(aim), code.length());
                 code = minified.substring(0, minified.indexOf("</p>"));
-                code = clean(code); // Limpeza das tags html.
+                content = clear(code); // Clear tags html off the code.
+                
                 if(display) print(Title(doc)+"\n");
-                if(display) print(code+"\n");
-                // Salva conteúdo para retorno em StringBuilder static.
-                CONTENT = code;
+                if(display) print(content+"\n");
             }
-        }catch(StringIndexOutOfBoundsException ex) {
-            print("Erro em limite de String.", "red");
-            return PARSING_ERROR;
         }catch(Exception ev) {
-            print("Erro: "+ev.getMessage()+"\n", "red");
-            return PARSING_ERROR;
+            print(ev.getMessage()+"\n", "red");
+            return PARSING_ERROR_MESSAGE;
         }
-        
-        return CONTENT;
+
+        return content;
     }
-    
+
+    /**
+     * Used when the user selects the first option; brings up all content of the page.
+     *
+     * @return
+     */
     @Override
     public String LastParseMethod() {
         if(status) {
-            print("> Metodo Final.");
+            print("> Last method.");
         }
         if(display) print(Title(doc)+"\n");
 
-        String content = doc.select(CONTENT_TAG).select("p").toString().replace("\n", "ʘ");
-        content = Jsoup.parse(content).text().replace("ʘ", "\n");
+        content = doc.select(CONTENT_TAG).select("p").toString().replace("\n", "ʘ");
+        content = clear(content).replace("ʘ", "\n");
 
         if(display) print(content);
 
-        CONTENT = content;
-        return CONTENT;
+        return content;
     }
-    
-    /**
-    * Conversão de dados e raspagem de conteúdo.
-    * 
-    * @param query página que será buscada na fonte.
-    * @return conteúdo da raspagem.
-    */
-    @Override
-    public String Parsing(String query) {
 
-        if(status) print("> Inicializado.");
-                    
-        SEARCH_QUERY = query;
-        
-        if(SEARCH_QUERY == null) return PARSING_ERROR;
-        
-        try{
-            Initialize(SOURCE+SEARCH_QUERY);
-            if(status) print("> Fonte: "+SOURCE);
-        }catch(Exception ex){
-            print("Erro em inicialização: "+ex.getMessage()+"\n", "red");
-            return PARSING_ERROR;
-        }
-        
-        // Gera um Document com o código da URL da fonte
-        try{
-            doc = Jsoup.parse(code.toString());
-        }catch(NullPointerException ex){
-            print("Erro em conversão: "+ex.getMessage()+"\n", "red");
-            return PARSING_ERROR;
-        }
-        
-        // Exibe as opções e roda o centro de raspagem.
-        return Core();
-    }
-    
     /**
-     * Centro da raspagem.
-     * 
-     * @return 
+     * Prepares and calls the Core of the scrap process
+     *
+     * @param query
+     * @return
+     * @throws java.lang.Exception
      */
     @Override
-    public String Core() {
-        
-        // Mostra janela de busca e a opção "Ver Opções"
-        try {
+    public String Parsing(String query) throws Exception, NullPointerException{
+
+        // Runs the scrapping core
+        try{
+            searchQuery = query;
+            if(Initialize(SOURCE+searchQuery)){  // throws IOException
+                if(status) print("> Initialized.");
+                if(status) print("> Source: "+SOURCE);
+                // Gets the code and parse it
+                doc = Jsoup.parse(code.toString());
+                return Core(); 
+            }else{
+                return NOT_FOUND_MESSAGE;
+            }
             
-            // Diálogo com as opções para seleção
-            Object[] opcoes = Options(doc, MAIN_TAG);
-            AIM = get("Opções:", opcoes);
+        }catch(IOException ex){
+            throw new IOException("Parsing error\n"+NOT_CONNECTED_MESSAGE);
+            
+        }catch(NullPointerException ex){
+            throw new NullPointerException("Parsing error\n"+NULL_ARGS_ERROR);
+            
+        }catch(final Exception ex){
+            throw new Exception("Parsing error\n"+UNKNOW_ERROR_MESSAGE);  // rethrow 
+        }
+    }
+
+    /**
+     * Parsing's core method.
+     *
+     * @return
+     * @throws NullPointerException
+     * @throws Exception
+     */
+    @Override
+    public String Core() throws NullPointerException, Exception{
+
+        // Show options dialog
+        try {
+            // Options selection dialog
+            Object[] opcoes = Options(doc);
+            aim = get("Options:", opcoes);
             int i = 0;
             for(Object opcao : opcoes) {
-                if(opcao.equals(AIM)) break;
+                if(opcao.equals(aim)) break;
                 else i++;
             }
-            if(!AIM.equals(opcoes[opcoes.length-1]))
-                NEXT = opcoes[i+1].toString().replace(" - ", "");
-            if (status) print("> Buscando:"+AIM);
-            
+            if(!aim.equals(opcoes[opcoes.length-1]))
+                nextOption = opcoes[i+1].toString().replace(" - ", "");
+            if (status) print("> Searching:"+aim);
+
         }catch (NullPointerException ex) {
-            print("Não foi possível conectar\n", "red");
-            return PARSING_ERROR;
+            throw new NullPointerException("Core Error\n"+NULL_ARGS_ERROR);
         }
-        
-        // Faz a raspagem apenas se passar na verificação.
+
+        // Parser only if verification returns true
         if(Verify()) {
-            
-            if(status) print("> Verificado.");
-            if(status) print("> Exibindo Opcoes. ");
-            
-            // Exibe as opções
+
+            if(status) print("> Verified.");
+            if(status) print("> Showing options. ");
+
             if(display) {
-                print(); // Quebra de linha
-                for(String opcao : Options(doc, MAIN_TAG)) {
+                print(); // new line
+                for(String opcao : Options(doc)) {
                     print(opcao);
                 }
             }
-            
-            // Recebe as tags <p> e gera uma String 
+
+            // Gets p tags
             Elements tags = doc.body().getElementsByTag("p");
             String text = tags.toString();
-            
-            // Gera String com todo o html do conteúdo
+
+            // Gets content 
             String all = doc.body().select(CONTENT_TAG).toString();
 
            /**
-            * Núcleo do processo de raspagem.
+            * Scrapping core process.
             */
-           
-           if(!AIM.equals("Ver Tudo")) {
-           
-                if(all.contains(AIM)) { 
+
+           if(!aim.equals(ALL_OPTIONS_MESSAGE)) {
+
+                if(all.contains(aim)) {
                     /*
                     * Principal processo de raspagem. Usa as opcoes para buscar.
-                    * 
+                    *
                     * Gera um novo código limpo por uma Whitelist do Jsoup.
                     * Cria substring partindo do titulo escolhido e retirando caracter que
                     * pode gerar erro na próxima substring.
                     * Cria a última substring usando o próximo item como limite.
                     */
-                    
-                    CONTENT = MainParseMethod(all);
+
+                    content = MainParseMethod(all);
                 }else{
                     /*
                     * Processo de raspagem alternativo. Usa parte do texto para buscar.
-                    * 
-                    * Primeiro é cortado da busca até o final. Depois pegamos esse corte 
+                    *
+                    * Primeiro é cortado da busca até o final. Depois pegamos esse corte
                     * e limitamos até a próxima tag. Então converte-se novamente com o Jsoup
                     * para poder usar o método text().
                     */
 
-                    CONTENT = AlternativeParseMethod(text);
+                    content = AlternativeParseMethod(text);
                 }
-                
+
             }else{
-               CONTENT = LastParseMethod();
+               content = LastParseMethod();
             }
 
-            if(CONTENT != null)
-                return CONTENT;
+            if(content != null)
+                return content;
         }
-                
-        return PARSING_ERROR;
-        
+
+        throw new Exception(PARSING_ERROR_MESSAGE);
+
     }
-    
-    /** 
-    * Busca o título com o Jsoup.
-    * 
-    * @param code Document da biblioteca Jsoup.
-    * @return retorna o título da página.
-    */
-    @Override
-    public String Title(Document code) {
-        return code.title();
-    }
-       
+
     /**
-    * Retorna lista com títulos do site em opções de busca.
-    *
-    * @param doc Document da biblioteca Jsoup.
-    * @param tag_class String da class html que identifica as opções.
-    * @return retorna as opções da página.
-    */
+     * Gets the webpage title.
+     *
+     * @param code
+     * @return
+     */
     @Override
-    public String[] Options(Document doc, String tag_class) {
-        String[] opcoes = doc.select(tag_class).toString().split("\n");
-        completo  = new String[opcoes.length+1];
-        completo[0] = " - Ver Tudo";
-        for(int i = 0; i < opcoes.length; i++) {
-            completo[i+1] = " - "+Jsoup.parse(opcoes[i]).text();
+    public String Title(Document code){
+        if (code != null)
+            return code.title();
+        else 
+            return NULL_ARGS_ERROR;
+    }
+
+    /**
+     * Gets options in the page.
+     *
+     * @param doc
+     * @return
+     */
+    @Override
+    public String[] Options(Document doc) {
+        String[] options = doc.select(MAIN_TAG).toString().split("\n");
+        allOptions  = new String[options.length+1];
+        allOptions[0] = " - "+ALL_OPTIONS_MESSAGE;
+        for(int i = 0; i < options.length; i++) {
+            allOptions[i+1] = " - "+clear(options[i]);
         }
-        return completo;
+        return allOptions;
     }
-    
+
     /**
-    * Conecta ao site e recebe o código fonte.
-    * 
-    * @param url do servidor de dados.
-    * @return retorna o êxito da inicialização. 
-    */
+     * Connects to the webpage.
+     *
+     * @param url
+     * @return
+     * @throws java.lang.Exception
+     * @throws java.io.IOException
+     */
     @Override
-    public boolean Initialize(String url) {
+    public boolean Initialize(String url) throws Exception, IOException{
         try {
-            code = Jsoup.connect(url).get();
+            code = connect(url);
             return true;
+            
         } catch (IOException ex) {
-            print("IOException - Não foi possível conectar. ", "red");
+            throw new IOException("Initializing error\n"+CONNECTION_FAILED_MESSAGE);
+            
         } catch(Exception ev) {
-            print("Exception: "+ev.getMessage(), "red");
+            throw new Exception("Initializing error\n"+UNKNOW_ERROR_MESSAGE);
         }
-        return false;
     }
-    
+
     /**
-    * Verifica o código para prosseguir com a raspagem.
-    * 
-    * @return retorna o êxito da verificação.
-    */
+     * Verify the code.
+     *
+     * @return
+     * @throws java.lang.Exception
+     */
     @Override
-    public boolean Verify() {
-        
-        AIM = AIM.replace(" - ", "");
-        
+    public boolean Verify() throws Exception, NullPointerException{
+
+        aim = aim.replace(" - ", "");
+
         try {
             boolean verify_code = code.toString().isEmpty();
         }catch(NullPointerException ex) {
-            print("Codigo vazio.\n", "red");
-            return false;
+            throw new NullPointerException("Verify error\n"+NULL_ARGS_ERROR);
         }
-        
-        if(AIM == null) {
-            print(" Busca vazia.\n", "red");
-            return false;
+
+        if(aim == null) {
+            throw new NullPointerException("Verify error\n"+NULL_ARGS_ERROR);
         }
-        
+
         if(SOURCE == null) {
-            print(" Nao ha fonte.\n", "red");
-            return false;
+            throw new NullPointerException("Verify error\n"+NULL_ARGS_ERROR);
         }
-        
-        if(!code.toString().contains(AIM) && !AIM.equals("Ver Tudo")) {
-            print(" Nao foi encontrado.\n", "red");
-            return false;
+
+        if(!code.toString().contains(aim) && !aim.equals(ALL_OPTIONS_MESSAGE)) {
+            throw new Exception("Verify error\n"+NOT_FOUND_MESSAGE);
         }
-        
+
         return true;
     }
-    
+
     /**
-     * Método para fechar objeto.
-     * 
+     * Finalizes all variables.
      */
     @Override
     public void Close() {
-        completo = null;
-        AIM = NEXT = SEARCH_QUERY = CONTENT = null;
+        allOptions = null;
+        aim = nextOption = searchQuery = content = null;
         code = doc = null;
     }
-    
+
 }
