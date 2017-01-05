@@ -7,20 +7,23 @@ import org.jsoup.nodes.Document;
 * Date: 09-08-2016
 * Update: 27-12-2016
 * Description: Parser's interface.
+* 
+* Version Update: 05-01-2017
+* 
 */
 
-interface Loader {
+public interface Loader {
 
-    String VERSION = "1.0.5.4";
+    public String VERSION = "1.0.5.5";
 
-    String MainParseMethod(String code);
-    String LastParseMethod();
-    String AlternativeParseMethod(String code);
-    String Parsing(String query) throws Exception;
-    String Core() throws Exception;
-    String Title(Document doc);
-    String[] Options(Document doc);
-    boolean Initialize(String url) throws Exception;
-    boolean Verify() throws Exception;
-    void Close();
+    public String MainParseMethod(String args);
+    public String LastParseMethod();
+    public String AlternativeParseMethod(String args);
+    public String Parsing(String query) throws Exception;
+    public String Core() throws Exception;
+    public String Title(Document doc);
+    public String[] Options(Document doc);
+    public boolean Initialize(String url) throws Exception;
+    public boolean Verify() throws Exception;
+    public void Close();
 }

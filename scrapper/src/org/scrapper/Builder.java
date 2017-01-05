@@ -6,12 +6,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 /**
-* Name: GUIStream
+* Name: Builder
 * Date: 15-12-2016
-* Update: 27-12-2016
+* Update: 05-01-2017
 * Description: Helper class.
 */
-public class Builder{
+public final class Builder{
 
     /**
      * ANSI escape codes
@@ -31,6 +31,15 @@ public class Builder{
      */
     public static void print() {
         print("");
+    }
+    
+    /**
+     * Prints text in the default output stream
+     * @param args
+     */
+    public static void print(String[] args) {
+        for(String arg : args)
+            System.out.println(arg);
     }
 
     /**
@@ -118,7 +127,31 @@ public class Builder{
      * @return 
      */
     public static String clear(String args) {
-        return Jsoup.parse(args).text();
+        args = Jsoup.parse(args).text();
+        
+        // Removes the brackets and their contents
+        char[] array = args.toCharArray();
+        
+        for(int i = 0; i < array.length; i++){
+            if(array[i] == '[') {
+                array[i] = '#';
+                i++;
+                try{
+                    while(array[i] != ']'){
+                        array[i] = '#';
+                        i++;
+                    }
+                    array[i] = '#';
+                }catch(ArrayIndexOutOfBoundsException e) { }
+            } 
+        }
+        args = new String(array).replace("#", "");
+
+        // Split into paragraphs
+        if(args.contains("."))
+            args = "   "+args.replace(".", ".\n\n   ");
+        
+        return args;
     }
 
     /**
@@ -131,5 +164,6 @@ public class Builder{
     public static Document connect(String url) throws IOException{
         return Jsoup.connect(url).get();
     }
+    
     
 }

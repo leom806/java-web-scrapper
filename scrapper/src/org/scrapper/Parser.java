@@ -6,13 +6,15 @@ import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
+import static org.scrapper.Builder.*;
+
 /**
 * Name: Parser
 * Date: 15-12-2016
-* Update: 27-12-2016
+* Update: 05-01-2017
 * Description: Conversion object class.
 */
-public class Parser extends Builder implements Loader{
+public abstract class Parser implements Loader{
 
     /*
     * =========================    VARIABLES    ================================
@@ -26,10 +28,11 @@ public class Parser extends Builder implements Loader{
     /*
     * =========================    CONSTANTS    ================================
     */
-
-    private final String MAIN_TAG = "span.mw-headline"; // tag and id or class that indicates main titles in the page
-    private final String CONTENT_TAG = "#mw-content-text"; // id or class that indicates the content to scrap
-    private final String SOURCE = "https://pt.wikipedia.org/wiki/"; // Website to scrap
+    
+    private String tag = null; // mainly marcation tag in the page 
+    private String mainTag = null; // tag and id or class that indicates main titles in the page
+    private String contentTag = null; // id or class that indicates the content to scrap
+    private String source = null; // Website to scrap
  
     /*
     * =========================    MESSAGES    =================================
@@ -48,12 +51,10 @@ public class Parser extends Builder implements Loader{
     * =========================    CONSTRUCTORS    =============================
     */
 
-    @SuppressWarnings("OverridableMethodCallInConstructor")
     public Parser() {
         this(false, false);
     }
 
-    @SuppressWarnings("OverridableMethodCallInConstructor")
     public Parser(boolean status, boolean display) {
         print(INIT_MESSAGE);
         this.status = status;
@@ -64,15 +65,60 @@ public class Parser extends Builder implements Loader{
     * =====================    GETTERS & SETTERS    ============================
     */
 
-    public String getSource() {
-        return SOURCE;
-    }
-
     public String[] getOptions() {
         if (allOptions != null)
             return allOptions;
         return new String[]{NOT_FOUND_MESSAGE};
     }
+    
+    public String getTag() {
+        return tag;
+    }
+    
+    public String getMainTag() {
+        return this.mainTag;
+    }
+    
+    public String getContentTag() {
+        return this.contentTag;
+    }
+    
+    public String getSource() {
+        return source;
+    }
+    
+    public void setTag(String tag) {
+        if(tag == null)
+            throw new RuntimeException("Tag must not be null.");
+        this.tag = tag;
+    }
+    
+    public void setMainTag(String tag) {
+        if(tag == null)
+            throw new RuntimeException("Main tag must not be null.");
+        this.mainTag = tag;
+    }
+    
+    public void setContentTag(String tag) {
+        if(tag == null)
+            throw new RuntimeException("Content tag must not be null.");
+        this.contentTag = tag;
+    }
+    
+    public void setSource(String url) {
+        if(url == null)
+            throw new RuntimeException("Source must not be null.");
+        this.source = url;
+    }
+    
+    /*
+    * =====================    ABSTRACT METHODS    =============================
+    */    
+    
+    /**
+     * This method MUST initialize all tags as well the source url.
+     */
+    public abstract void initTagsAndSource();
 
     /*
     * ===========================    METHODS    ================================
@@ -92,7 +138,7 @@ public class Parser extends Builder implements Loader{
         if(display) print(Title(doc)+"\n");
 
         Whitelist wl = new Whitelist();
-        wl.addTags("span", "p");
+        wl.addTags(getTag(), "p");
 
         // Clean using the allowed tags of the whitelist
         String clean = Jsoup.clean(code, wl);
@@ -105,18 +151,16 @@ public class Parser extends Builder implements Loader{
         */
         clean = clean.replace("<span><span>[</span>editar<span> | </span>editar código-fonte<span>]</span></span>", " ");
 
-        // YOU MUST CHANGE THIS TAG
-        String ocurrency = "<span>"+aim+"</span>";
-        String limit = "<span>"+nextOption+"</span>";
+        String ocurrency = "<"+getTag()+">"+aim+"</"+getTag()+">";
+        String limit = "<"+getTag()+">"+nextOption+"</"+getTag()+">";
 
         clean = clean.substring(clean.lastIndexOf(ocurrency)+ocurrency.length());
-        clean = clean.replace("\n", "ʘ"); // Replaces \n with a joker to keep the \n after
 
         if(clean.contains(limit))
             clean = clean.substring(0, clean.indexOf(limit));
-
-        content = clear(clean).replace("ʘ", "\n");
-
+        
+        content = clear(clean);
+        
         if(display) print(content);
 
         return content;
@@ -162,7 +206,7 @@ public class Parser extends Builder implements Loader{
         }
         if(display) print(Title(doc)+"\n");
 
-        content = doc.select(CONTENT_TAG).select("p").toString().replace("\n", "ʘ");
+        content = doc.select(getContentTag()).select("p").toString().replace("\n", "ʘ");
         content = clear(content).replace("ʘ", "\n");
 
         if(display) print(content);
@@ -183,9 +227,9 @@ public class Parser extends Builder implements Loader{
         // Runs the scrapping core
         try{
             searchQuery = query;
-            if(Initialize(SOURCE+searchQuery)){  // throws IOException
+            if(Initialize(getSource()+searchQuery)){  // throws IOException
                 if(status) print("> Initialized.");
-                if(status) print("> Source: "+SOURCE);
+                if(status) print("> Source: "+getSource());
                 // Gets the code and parse it
                 doc = Jsoup.parse(code.toString());
                 return Core(); 
@@ -250,7 +294,7 @@ public class Parser extends Builder implements Loader{
             String text = tags.toString();
 
             // Gets content 
-            String all = doc.body().select(CONTENT_TAG).toString();
+            String all = doc.body().select(getContentTag()).toString();
 
            /**
             * Scrapping core process.
@@ -315,7 +359,7 @@ public class Parser extends Builder implements Loader{
      */
     @Override
     public String[] Options(Document doc) {
-        String[] options = doc.select(MAIN_TAG).toString().split("\n");
+        String[] options = doc.select(getMainTag()).toString().split("\n");
         allOptions  = new String[options.length+1];
         allOptions[0] = " - "+ALL_OPTIONS_MESSAGE;
         for(int i = 0; i < options.length; i++) {
@@ -367,7 +411,7 @@ public class Parser extends Builder implements Loader{
             throw new NullPointerException("Verify error\n"+NULL_ARGS_ERROR);
         }
 
-        if(SOURCE == null) {
+        if(getSource() == null) {
             throw new NullPointerException("Verify error\n"+NULL_ARGS_ERROR);
         }
 

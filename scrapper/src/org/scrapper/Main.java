@@ -1,20 +1,18 @@
 package org.scrapper;
 
+import javax.swing.SwingUtilities;
+
 /**
 * Name: Main
 * Date: 20-12-2016
-* Update: 27-12-2016
-* Description: Main class.
+* Update: 05-01-2017
+* Description: Start class.
 */
 
-public class Main extends Parser{
-
-    @SuppressWarnings({"ResultOfObjectAllocationIgnored"})
-    public Main() {
-        new GUI().setVisible(true);        
-    }
-
+public class Main{
     public static void main(String[] args) {
-        Main m = new Main();
+        SwingUtilities.invokeLater(
+            () -> new GUI().setVisible(true) 
+        );
     }
 }
