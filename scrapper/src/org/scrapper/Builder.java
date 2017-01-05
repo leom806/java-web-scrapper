@@ -1,5 +1,6 @@
 package org.scrapper;
 
+import java.awt.HeadlessException;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import org.jsoup.Jsoup;
@@ -66,6 +67,7 @@ public final class Builder{
      * @param args 
      * @param color 
      */
+    @SuppressWarnings("InfiniteRecursion")
     public static void print(String args, String color) {
         try{
             switch(color) {
@@ -94,7 +96,7 @@ public final class Builder{
     public static void show(String args) {
         try{
             JOptionPane.showMessageDialog(null, args);
-        }catch(Exception ex){
+        }catch(HeadlessException ex){
             print(ex.getMessage()+"\n", "red");
         }
     }
